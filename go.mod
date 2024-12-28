@@ -1,4 +1,4 @@
-module github.com/solumD/go-service-template
+module github.com/solumD/WBTech_L0
 
 go 1.22.2
 

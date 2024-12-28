@@ -3,9 +3,9 @@ package someservicename
 import (
 	"context"
 
-	"github.com/solumD/go-service-template/internal/client/db"
-	"github.com/solumD/go-service-template/internal/repository"
-	"github.com/solumD/go-service-template/internal/service"
+	"github.com/solumD/WBTech_L0/internal/client/db"
+	"github.com/solumD/WBTech_L0/internal/repository"
+	"github.com/solumD/WBTech_L0/internal/service"
 )
 
 type srv struct {
