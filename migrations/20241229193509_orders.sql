@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TABLE delivery (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     phone VARCHAR NOT NULL,
     zip VARCHAR NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE delivery (
 );
 
 CREATE TABLE payment (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     transaction VARCHAR UNIQUE NOT NULL,
     request_id VARCHAR UNIQUE,
     currency VARCHAR NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE payment (
 );
 
 CREATE TABLE item (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     chrt_id INT UNIQUE NOT NULL,
     track_number VARCHAR NOT NULL,
     price INT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE orders_and_items (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     order_id INT REFERENCES orders(id),
     item_id INT REFERENCES item(id)
 );

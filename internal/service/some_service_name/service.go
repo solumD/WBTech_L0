@@ -9,15 +9,15 @@ import (
 )
 
 type srv struct {
-	someRepository repository.SomeRepository
-	txManager      db.TxManager
+	orderRepository repository.OrderRepository
+	txManager       db.TxManager
 }
 
 // New returns new service object
-func New(someRepository repository.SomeRepository, txManager db.TxManager) service.SomeService {
+func New(orderRepository repository.OrderRepository, txManager db.TxManager) service.SomeService {
 	return &srv{
-		someRepository: someRepository,
-		txManager:      txManager,
+		orderRepository: orderRepository,
+		txManager:       txManager,
 	}
 }
 

@@ -1,9 +1,13 @@
 package repository
 
-import "context"
+import (
+	"context"
 
-// SomeRepository interface of something repository
-type SomeRepository interface {
-	// some repository methods
-	SomeMethod(ctx context.Context, someArgs ...interface{}) (interface{}, error)
+	"github.com/solumD/WBTech_L0/internal/model"
+)
+
+// OrderRepository interface of orders repository
+type OrderRepository interface {
+	CreateOrder(ctx context.Context, order model.Order) error
+	GetAllOrders(ctx context.Context) ([]*model.Order, error)
 }

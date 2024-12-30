@@ -11,7 +11,7 @@ import (
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
 	"github.com/solumD/WBTech_L0/internal/repository"
-	somereponame "github.com/solumD/WBTech_L0/internal/repository/some_repo_name"
+	orderRepo "github.com/solumD/WBTech_L0/internal/repository/order"
 	"github.com/solumD/WBTech_L0/internal/service"
 	someservicename "github.com/solumD/WBTech_L0/internal/service/some_service_name"
 )
@@ -24,9 +24,9 @@ type serviceProvider struct {
 	dbClient  db.Client
 	txManager db.TxManager
 
-	someRepository repository.SomeRepository
-	someService    service.SomeService
-	someAPI        *somenameapi.API
+	orderRepository repository.OrderRepository
+	someService     service.SomeService
+	someAPI         *somenameapi.API
 }
 
 // NewServiceProvider returns new object of service provider
@@ -106,19 +106,19 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
-// SomeRepository initializes some repository if it is not initialized yet and returns it
-func (s *serviceProvider) SomeRepository(ctx context.Context) repository.SomeRepository {
-	if s.someRepository == nil {
-		s.someRepository = somereponame.New(s.DBClient(ctx))
+// OrderRepository initializes order repository if it is not initialized yet and returns it
+func (s *serviceProvider) OrderRepository(ctx context.Context) repository.OrderRepository {
+	if s.orderRepository == nil {
+		s.orderRepository = orderRepo.New(s.DBClient(ctx))
 	}
 
-	return s.someRepository
+	return s.orderRepository
 }
 
 // SomeService initializes some service if it is not initialized yet and returns it
 func (s *serviceProvider) SomeService(ctx context.Context) service.SomeService {
 	if s.someService == nil {
-		s.someService = someservicename.New(s.SomeRepository(ctx), s.TxManager(ctx))
+		s.someService = someservicename.New(s.OrderRepository(ctx), s.TxManager(ctx))
 	}
 
 	return s.someService
