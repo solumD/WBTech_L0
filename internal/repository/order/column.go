@@ -1,6 +1,6 @@
 package order
 
-const (
+var (
 	idCol = "id"
 
 	deliveryTableName = "delivery"
@@ -49,8 +49,8 @@ const (
 	deliveryServiceCol   = "delivery_service"
 	shardkeyCol          = "shardkey"
 	smIDCol              = "sm_id"
-	dateCreatedCol       = "date_created"
-	oofShardCol          = "oof_shard"
+	//dateCreatedCol       = "date_created"
+	oofShardCol = "oof_shard"
 
 	ordersAndItemsTableName = "orders_and_items"
 	orderIdCol              = "order_id"

@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"log"
 
 	"github.com/solumD/WBTech_L0/internal/client/db"
 	"github.com/solumD/WBTech_L0/internal/model"
@@ -50,12 +51,29 @@ func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
 
 // GetOrder gets all orders from storage
 func (r *repo) GetAllOrders(ctx context.Context) ([]*model.Order, error) {
-	orders, err := r.getOrders(ctx)
+	orders, err := r.getAndSetAllOrders(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	_ = orders
+	orders, err = r.getAndSetAllDelivery(ctx, orders)
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err = r.getAndSetAllPayment(ctx, orders)
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err = r.getAndSetAllItems(ctx, orders)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, o := range orders {
+		log.Println(o)
+	}
 
 	return nil, nil
 }

@@ -6,6 +6,6 @@ import (
 )
 
 // FromRepoToServiceOrder gets models from repo, connects them and converts into one service order model
-func FromRepoToServiceOrder(delivery modelRepo.Delivery, payment modelRepo.Payment, items []modelRepo.Item) *modelServ.Order {
+func FromRepoToServiceOrder(order *modelRepo.Order) *modelServ.Order {
 	return nil
 }
