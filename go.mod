@@ -3,6 +3,7 @@ module github.com/solumD/WBTech_L0
 go 1.22.2
 
 require (
+	github.com/Masterminds/squirrel v1.5.4
 	github.com/georgysavva/scany v1.2.2
 	github.com/jackc/pgconn v1.14.3
 	github.com/jackc/pgx/v4 v4.18.3
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 )
