@@ -4,7 +4,7 @@ import "time"
 
 // Delivery model of delivery info
 type Delivery struct {
-	Id      int    `db:"id"`
+	ID      int    `db:"id"`
 	Name    string `db:"name"`
 	Phone   string `db:"phone"`
 	Zip     string `db:"zip"`
@@ -16,7 +16,7 @@ type Delivery struct {
 
 // Payment model of payment info
 type Payment struct {
-	Id           int    `db:"id"`
+	ID           int    `db:"id"`
 	Transaction  string `db:"transaction"`
 	RequestID    string `db:"request_id"`
 	Currency     string `db:"currency"`
@@ -31,7 +31,7 @@ type Payment struct {
 
 // Item model of item info
 type Item struct {
-	Id          int    `db:"id"`
+	ID          int    `db:"id"`
 	ChrtID      int    `db:"chrt_id"`
 	TrackNumber string `db:"track_number"`
 	Price       int    `db:"price"`
@@ -47,15 +47,15 @@ type Item struct {
 
 // Order model of an order info
 type Order struct {
-	Id                int    `db:"id"`
+	ID                int    `db:"id"`
 	OrderUID          string `db:"order_uid"`
 	TrackNumber       string `db:"track_number"`
 	Entry             string `db:"entry"`
-	DeliveryId        int    `db:"delivery_id"`
+	DeliveryID        int    `db:"delivery_id"`
 	Delivery          Delivery
+	PaymentID         int `db:"payment_id"`
 	Payment           Payment
 	Items             []Item
-	PaymentId         int       `db:"payment_id"`
 	Locale            string    `db:"locale"`
 	InternalSignature string    `db:"internal_signature"`
 	CustomerID        string    `db:"customer_id"`

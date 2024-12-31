@@ -41,8 +41,8 @@ var (
 	orderUIDCol          = "order_uid"
 	ordersTrackNumberCol = "track_number"
 	entryCol             = "entry"
-	deliveryIdCol        = "delivery_id"
-	paymentIdCol         = "payment_id"
+	deliveryIDCol        = "delivery_id"
+	paymentIDCol         = "payment_id"
 	localeCol            = "locale"
 	internalSignatureCol = "internal_signature"
 	customerIDCol        = "customer_id"
@@ -53,6 +53,6 @@ var (
 	oofShardCol = "oof_shard"
 
 	ordersAndItemsTableName = "orders_and_items"
-	orderIdCol              = "order_id"
-	itemIdCol               = "item_id"
+	orderIDCol              = "order_id"
+	itemIDCol               = "item_id"
 )

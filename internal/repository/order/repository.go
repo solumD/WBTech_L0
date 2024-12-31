@@ -22,27 +22,27 @@ func New(db db.Client) repository.OrderRepository {
 
 // CreateOrder inserts order in storage
 func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
-	deliveryId, err := r.createDelivery(ctx, order.Delivery)
+	deliveryID, err := r.createDelivery(ctx, order.Delivery)
 	if err != nil {
 		return err
 	}
 
-	paymentId, err := r.createPayment(ctx, order.Payment)
+	paymentID, err := r.createPayment(ctx, order.Payment)
 	if err != nil {
 		return err
 	}
 
-	itemsIds, err := r.createItems(ctx, order.Items)
+	itemsIDs, err := r.createItems(ctx, order.Items)
 	if err != nil {
 		return err
 	}
 
-	orderId, err := r.createOrder(ctx, order, deliveryId, paymentId)
+	orderID, err := r.createOrder(ctx, order, deliveryID, paymentID)
 	if err != nil {
 		return err
 	}
 
-	if err := r.createOrdersAndItems(ctx, orderId, itemsIds); err != nil {
+	if err := r.createOrdersAndItems(ctx, orderID, itemsIDs); err != nil {
 		return err
 	}
 
@@ -51,7 +51,7 @@ func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
 
 // GetOrder gets all orders from storage
 func (r *repo) GetAllOrders(ctx context.Context) ([]*model.Order, error) {
-	orders, err := r.getAndSetAllOrders(ctx)
+	orders, err := r.getAllOrders(ctx)
 	if err != nil {
 		return nil, err
 	}

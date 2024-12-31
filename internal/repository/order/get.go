@@ -9,7 +9,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (r *repo) getAndSetAllOrders(ctx context.Context) ([]modelRepo.Order, error) {
+func (r *repo) getAllOrders(ctx context.Context) ([]modelRepo.Order, error) {
 	query, args, err := sq.Select("*").From(ordersTableName).ToSql()
 
 	if err != nil {
@@ -32,12 +32,12 @@ func (r *repo) getAndSetAllOrders(ctx context.Context) ([]modelRepo.Order, error
 		var order modelRepo.Order
 
 		err := rows.Scan(
-			&order.Id,
+			&order.ID,
 			&order.OrderUID,
 			&order.TrackNumber,
 			&order.Entry,
-			&order.DeliveryId,
-			&order.PaymentId,
+			&order.DeliveryID,
+			&order.PaymentID,
 			&order.Locale,
 			&order.InternalSignature,
 			&order.CustomerID,
@@ -63,7 +63,7 @@ func (r *repo) getAndSetAllDelivery(ctx context.Context, orders []modelRepo.Orde
 		query, args, err := sq.Select("*").
 			From(deliveryTableName).
 			PlaceholderFormat(sq.Dollar).
-			Where(sq.Eq{idCol: order.DeliveryId}).
+			Where(sq.Eq{idCol: order.DeliveryID}).
 			ToSql()
 
 		if err != nil {
@@ -91,7 +91,7 @@ func (r *repo) getAndSetAllPayment(ctx context.Context, orders []modelRepo.Order
 		query, args, err := sq.Select("*").
 			From(paymentTableName).
 			PlaceholderFormat(sq.Dollar).
-			Where(sq.Eq{idCol: order.PaymentId}).
+			Where(sq.Eq{idCol: order.PaymentID}).
 			ToSql()
 
 		if err != nil {
@@ -116,10 +116,10 @@ func (r *repo) getAndSetAllPayment(ctx context.Context, orders []modelRepo.Order
 
 func (r *repo) getAndSetAllItems(ctx context.Context, orders []modelRepo.Order) ([]modelRepo.Order, error) {
 	for i, order := range orders {
-		query, args, err := sq.Select(itemIdCol).
+		query, args, err := sq.Select(itemIDCol).
 			From(ordersAndItemsTableName).
 			PlaceholderFormat(sq.Dollar).
-			Where(sq.Eq{orderIdCol: order.Id}).
+			Where(sq.Eq{orderIDCol: order.ID}).
 			ToSql()
 
 		if err != nil {

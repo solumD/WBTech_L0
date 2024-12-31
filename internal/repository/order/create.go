@@ -98,7 +98,7 @@ func (r *repo) createPayment(ctx context.Context, payment model.Payment) (int, e
 }
 
 func (r *repo) createItems(ctx context.Context, items []model.Item) ([]int, error) {
-	itemsIds := make([]int, 0, 10)
+	itemsIDs := make([]int, 0, 10)
 	for _, item := range items {
 		query, args, err :=
 			sq.Insert(itemTableName).
@@ -145,13 +145,13 @@ func (r *repo) createItems(ctx context.Context, items []model.Item) ([]int, erro
 			return nil, err
 		}
 
-		itemsIds = append(itemsIds, id)
+		itemsIDs = append(itemsIDs, id)
 	}
 
-	return itemsIds, nil
+	return itemsIDs, nil
 }
 
-func (r *repo) createOrder(ctx context.Context, order model.Order, deliveryId, paymentId int) (int, error) {
+func (r *repo) createOrder(ctx context.Context, order model.Order, deliveryID, paymentID int) (int, error) {
 	query, args, err :=
 		sq.Insert(ordersTableName).
 			PlaceholderFormat(sq.Dollar).
@@ -159,8 +159,8 @@ func (r *repo) createOrder(ctx context.Context, order model.Order, deliveryId, p
 				orderUIDCol,
 				ordersTrackNumberCol,
 				entryCol,
-				deliveryIdCol,
-				paymentIdCol,
+				deliveryIDCol,
+				paymentIDCol,
 				localeCol,
 				internalSignatureCol,
 				customerIDCol,
@@ -173,8 +173,8 @@ func (r *repo) createOrder(ctx context.Context, order model.Order, deliveryId, p
 				order.OrderUID,
 				order.TrackNumber,
 				order.Entry,
-				deliveryId,
-				paymentId,
+				deliveryID,
+				paymentID,
 				order.Locale,
 				order.InternalSignature,
 				order.CustomerID,
@@ -202,13 +202,13 @@ func (r *repo) createOrder(ctx context.Context, order model.Order, deliveryId, p
 	return id, nil
 }
 
-func (r *repo) createOrdersAndItems(ctx context.Context, orderId int, itemsIds []int) error {
+func (r *repo) createOrdersAndItems(ctx context.Context, orderID int, itemsIDs []int) error {
 	builder := sq.Insert(ordersAndItemsTableName).
 		PlaceholderFormat(sq.Dollar).
-		Columns(orderIdCol, itemIdCol)
+		Columns(orderIDCol, itemIDCol)
 
-	for _, itemId := range itemsIds {
-		builder = builder.Values(orderId, itemId)
+	for _, id := range itemsIDs {
+		builder = builder.Values(orderID, id)
 	}
 
 	query, args, err := builder.ToSql()
