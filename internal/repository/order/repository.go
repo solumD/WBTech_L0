@@ -49,6 +49,7 @@ func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
 	return nil
 }
 
+// TODO: написать конвертер
 // GetOrder gets all orders from storage
 func (r *repo) GetAllOrders(ctx context.Context) ([]*model.Order, error) {
 	orders, err := r.getAllOrders(ctx)

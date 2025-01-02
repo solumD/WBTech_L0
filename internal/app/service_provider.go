@@ -5,6 +5,8 @@ import (
 	"log"
 
 	somenameapi "github.com/solumD/WBTech_L0/internal/api/some_name_api"
+	"github.com/solumD/WBTech_L0/internal/cache"
+	inmemory "github.com/solumD/WBTech_L0/internal/cache/order/in_memory"
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
 	"github.com/solumD/WBTech_L0/internal/db"
@@ -23,6 +25,8 @@ type serviceProvider struct {
 
 	dbClient  db.Client
 	txManager db.TxManager
+
+	orderCache cache.OrderCache
 
 	orderRepository repository.OrderRepository
 	someService     service.SomeService
@@ -106,6 +110,15 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
+// OrderCache initializes order cache if it is not initialized yet and returns it
+func (s *serviceProvider) OrderCache() cache.OrderCache {
+	if s.orderCache == nil {
+		s.orderCache = inmemory.New()
+	}
+
+	return s.orderCache
+}
+
 // OrderRepository initializes order repository if it is not initialized yet and returns it
 func (s *serviceProvider) OrderRepository(ctx context.Context) repository.OrderRepository {
 	if s.orderRepository == nil {
@@ -118,7 +131,7 @@ func (s *serviceProvider) OrderRepository(ctx context.Context) repository.OrderR
 // SomeService initializes some service if it is not initialized yet and returns it
 func (s *serviceProvider) SomeService(ctx context.Context) service.SomeService {
 	if s.someService == nil {
-		s.someService = someservicename.New(s.OrderRepository(ctx), s.TxManager(ctx))
+		s.someService = someservicename.New(s.OrderRepository(ctx), s.OrderCache(), s.TxManager(ctx))
 	}
 
 	return s.someService
