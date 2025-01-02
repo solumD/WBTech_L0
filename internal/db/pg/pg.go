@@ -3,8 +3,8 @@ package pg
 import (
 	"context"
 
-	"github.com/solumD/WBTech_L0/internal/client/db"
-	"github.com/solumD/WBTech_L0/internal/client/db/prettier"
+	"github.com/solumD/WBTech_L0/internal/db"
+	"github.com/solumD/WBTech_L0/internal/db/prettier"
 	"github.com/solumD/WBTech_L0/internal/logger"
 	"go.uber.org/zap"
 

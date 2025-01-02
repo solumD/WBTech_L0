@@ -3,7 +3,7 @@ package order
 import (
 	"context"
 
-	"github.com/solumD/WBTech_L0/internal/client/db"
+	"github.com/solumD/WBTech_L0/internal/db"
 	modelRepo "github.com/solumD/WBTech_L0/internal/repository/order/model"
 
 	sq "github.com/Masterminds/squirrel"

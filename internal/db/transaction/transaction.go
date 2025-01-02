@@ -3,8 +3,8 @@ package transaction
 import (
 	"context"
 
-	"github.com/solumD/WBTech_L0/internal/client/db"
-	"github.com/solumD/WBTech_L0/internal/client/db/pg"
+	"github.com/solumD/WBTech_L0/internal/db"
+	"github.com/solumD/WBTech_L0/internal/db/pg"
 
 	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"

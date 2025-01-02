@@ -3,7 +3,7 @@ package someservicename
 import (
 	"context"
 
-	"github.com/solumD/WBTech_L0/internal/client/db"
+	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/repository"
 	"github.com/solumD/WBTech_L0/internal/service"
 )
