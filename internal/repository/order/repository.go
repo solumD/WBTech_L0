@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"log"
 
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/model"
@@ -50,7 +49,6 @@ func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
 	return nil
 }
 
-// TODO: написать конвертер
 // GetOrder gets all orders from storage
 func (r *repo) GetAllOrders(ctx context.Context) ([]model.Order, error) {
 	orders, err := r.getAllOrders(ctx)
@@ -78,6 +76,5 @@ func (r *repo) GetAllOrders(ctx context.Context) ([]model.Order, error) {
 		servOrders = append(servOrders, converter.FromRepoToServiceOrder(o))
 	}
 
-	log.Println(servOrders)
 	return servOrders, nil
 }
