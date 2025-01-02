@@ -7,6 +7,7 @@ import (
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/model"
 	"github.com/solumD/WBTech_L0/internal/repository"
+	"github.com/solumD/WBTech_L0/internal/repository/order/converter"
 )
 
 type repo struct {
@@ -51,7 +52,7 @@ func (r *repo) CreateOrder(ctx context.Context, order model.Order) error {
 
 // TODO: написать конвертер
 // GetOrder gets all orders from storage
-func (r *repo) GetAllOrders(ctx context.Context) ([]*model.Order, error) {
+func (r *repo) GetAllOrders(ctx context.Context) ([]model.Order, error) {
 	orders, err := r.getAllOrders(ctx)
 	if err != nil {
 		return nil, err
@@ -72,9 +73,11 @@ func (r *repo) GetAllOrders(ctx context.Context) ([]*model.Order, error) {
 		return nil, err
 	}
 
+	servOrders := []model.Order{}
 	for _, o := range orders {
-		log.Println(o)
+		servOrders = append(servOrders, converter.FromRepoToServiceOrder(o))
 	}
 
-	return nil, nil
+	log.Println(servOrders)
+	return servOrders, nil
 }

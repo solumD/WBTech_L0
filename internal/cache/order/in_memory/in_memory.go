@@ -11,20 +11,20 @@ import (
 )
 
 type inMemoryOrderCache struct {
-	orders map[string]*model.Order
+	orders map[string]model.Order
 	mu     *sync.RWMutex
 }
 
 // New returns new in-memory order cache object
 func New() cache.OrderCache {
 	return &inMemoryOrderCache{
-		orders: make(map[string]*model.Order),
+		orders: make(map[string]model.Order),
 		mu:     &sync.RWMutex{},
 	}
 }
 
 // SaveOrder saves order in cache by its' uid
-func (c *inMemoryOrderCache) SaveOrder(uid string, order *model.Order) error {
+func (c *inMemoryOrderCache) SaveOrder(uid string, order model.Order) error {
 	c.mu.RLock()
 	_, exist := c.orders[uid]
 	c.mu.Unlock()
@@ -41,13 +41,13 @@ func (c *inMemoryOrderCache) SaveOrder(uid string, order *model.Order) error {
 }
 
 // GetOrderByUID gets order from cache by its' uid
-func (c *inMemoryOrderCache) GetOrderByUID(uid string) (*model.Order, error) {
+func (c *inMemoryOrderCache) GetOrderByUID(uid string) (model.Order, error) {
 	c.mu.RLock()
 	order, exist := c.orders[uid]
 	c.mu.Unlock()
 
 	if !exist {
-		return nil, fmt.Errorf("order with uid %s doesn't exist", uid)
+		return model.Order{}, fmt.Errorf("order with uid %s doesn't exist", uid)
 	}
 
 	return order, nil

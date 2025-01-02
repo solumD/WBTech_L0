@@ -9,7 +9,7 @@ import (
 
 // OrderCache interface of order cache
 type OrderCache interface {
-	SaveOrder(uid string, order *model.Order) error
-	GetOrderByUID(uid string) (*model.Order, error)
+	SaveOrder(uid string, order model.Order) error
+	GetOrderByUID(uid string) (model.Order, error)
 	LoadOrders(ctx context.Context, repo repository.OrderRepository) error
 }
