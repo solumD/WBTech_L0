@@ -6,12 +6,12 @@ import "github.com/solumD/WBTech_L0/internal/service"
 
 // API ...
 type API struct {
-	someService service.SomeService
+	orderService service.OrderService
 }
 
 // New returns new API object
-func New(someService service.SomeService) *API {
+func New(someService service.OrderService) *API {
 	return &API{
-		someService: someService,
+		orderService: someService,
 	}
 }

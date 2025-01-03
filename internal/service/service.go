@@ -1,9 +1,13 @@
 package service
 
-import "context"
+import (
+	"context"
 
-// SomeService interface of something service
-type SomeService interface {
-	// some service methods
-	SomeMethod(ctx context.Context, someArgs ...interface{}) (interface{}, error)
+	"github.com/solumD/WBTech_L0/internal/model"
+)
+
+// OrderService interface of order service
+type OrderService interface {
+	CreateOrder(ctx context.Context, order model.Order) error
+	GetOrderByUID(ctx context.Context, uid string) (model.Order, error)
 }

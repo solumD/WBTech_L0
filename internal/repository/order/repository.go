@@ -13,7 +13,7 @@ type repo struct {
 	db db.Client
 }
 
-// New returns new repository object
+// New returns new order repository object
 func New(db db.Client) repository.OrderRepository {
 	return &repo{
 		db: db,

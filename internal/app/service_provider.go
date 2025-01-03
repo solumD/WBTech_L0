@@ -15,7 +15,7 @@ import (
 	"github.com/solumD/WBTech_L0/internal/repository"
 	orderRepo "github.com/solumD/WBTech_L0/internal/repository/order"
 	"github.com/solumD/WBTech_L0/internal/service"
-	someservicename "github.com/solumD/WBTech_L0/internal/service/some_service_name"
+	orderService "github.com/solumD/WBTech_L0/internal/service/order"
 )
 
 type serviceProvider struct {
@@ -29,7 +29,7 @@ type serviceProvider struct {
 	orderCache cache.OrderCache
 
 	orderRepository repository.OrderRepository
-	someService     service.SomeService
+	orderService    service.OrderService
 	someAPI         *somenameapi.API
 }
 
@@ -57,7 +57,7 @@ func (s *serviceProvider) LoggerConfig() config.LoggerConfig {
 	if s.loggerConfig == nil {
 		cfg, err := config.NewLoggerConfig()
 		if err != nil {
-			log.Fatalf("failed to get logger config:%v", err)
+			log.Fatalf("failed to get logger config: %v", err)
 		}
 
 		s.loggerConfig = cfg
@@ -111,9 +111,15 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 }
 
 // OrderCache initializes order cache if it is not initialized yet and returns it
-func (s *serviceProvider) OrderCache() cache.OrderCache {
+func (s *serviceProvider) OrderCache(ctx context.Context) cache.OrderCache {
 	if s.orderCache == nil {
 		s.orderCache = inmemory.New()
+
+		err := s.orderCache.LoadOrders(ctx, s.OrderRepository(ctx))
+		if err != nil {
+			log.Fatalf("failed to load orders in cache: %v", err)
+		}
+
 	}
 
 	return s.orderCache
@@ -128,19 +134,19 @@ func (s *serviceProvider) OrderRepository(ctx context.Context) repository.OrderR
 	return s.orderRepository
 }
 
-// SomeService initializes some service if it is not initialized yet and returns it
-func (s *serviceProvider) SomeService(ctx context.Context) service.SomeService {
-	if s.someService == nil {
-		s.someService = someservicename.New(s.OrderRepository(ctx), s.OrderCache(), s.TxManager(ctx))
+// OrderService initializes order service if it is not initialized yet and returns it
+func (s *serviceProvider) OrderService(ctx context.Context) service.OrderService {
+	if s.orderService == nil {
+		s.orderService = orderService.New(s.OrderRepository(ctx), s.OrderCache(ctx), s.TxManager(ctx))
 	}
 
-	return s.someService
+	return s.orderService
 }
 
 // SomeAPI initializes some api if it is not initialized yet and returns it
 func (s *serviceProvider) SomeAPI(ctx context.Context) *somenameapi.API {
 	if s.someAPI == nil {
-		s.someAPI = somenameapi.New(s.SomeService(ctx))
+		s.someAPI = somenameapi.New(s.OrderService(ctx))
 	}
 
 	return s.someAPI
