@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	somenameapi "github.com/solumD/WBTech_L0/internal/api/some_name_api"
 	"github.com/solumD/WBTech_L0/internal/cache"
 	inmemory "github.com/solumD/WBTech_L0/internal/cache/order/in_memory"
 	"github.com/solumD/WBTech_L0/internal/closer"
@@ -12,6 +11,7 @@ import (
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/db/pg"
 	"github.com/solumD/WBTech_L0/internal/db/transaction"
+	"github.com/solumD/WBTech_L0/internal/handler"
 	"github.com/solumD/WBTech_L0/internal/repository"
 	orderRepo "github.com/solumD/WBTech_L0/internal/repository/order"
 	"github.com/solumD/WBTech_L0/internal/service"
@@ -30,7 +30,7 @@ type serviceProvider struct {
 
 	orderRepository repository.OrderRepository
 	orderService    service.OrderService
-	someAPI         *somenameapi.API
+	handler         *handler.Handler
 }
 
 // NewServiceProvider returns new object of service provider
@@ -143,11 +143,11 @@ func (s *serviceProvider) OrderService(ctx context.Context) service.OrderService
 	return s.orderService
 }
 
-// SomeAPI initializes some api if it is not initialized yet and returns it
-func (s *serviceProvider) SomeAPI(ctx context.Context) *somenameapi.API {
-	if s.someAPI == nil {
-		s.someAPI = somenameapi.New(s.OrderService(ctx))
+// Handler initializes OrderHandler if it is not initialized yet and returns it
+func (s *serviceProvider) Handler(ctx context.Context) *handler.Handler {
+	if s.handler == nil {
+		s.handler = handler.New(s.OrderService(ctx))
 	}
 
-	return s.someAPI
+	return s.handler
 }
