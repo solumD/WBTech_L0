@@ -143,7 +143,7 @@ func (s *serviceProvider) OrderService(ctx context.Context) service.OrderService
 	return s.orderService
 }
 
-// Handler initializes OrderHandler if it is not initialized yet and returns it
+// Handler initializes handler if it is not initialized yet and returns it
 func (s *serviceProvider) Handler(ctx context.Context) *handler.Handler {
 	if s.handler == nil {
 		s.handler = handler.New(s.OrderService(ctx))

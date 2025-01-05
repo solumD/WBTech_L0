@@ -2,6 +2,9 @@ package app
 
 import (
 	"context"
+	"log"
+	"net/http"
+	"sync"
 
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
@@ -13,7 +16,7 @@ const configPath = ".env"
 // App object of an app
 type App struct {
 	serviceProvider *serviceProvider
-	// servers or handlers
+	server          *http.Server
 }
 
 // NewApp returns new App object
@@ -35,90 +38,31 @@ func (a *App) Run() error {
 		closer.Wait()
 	}()
 
-	/*testOrder := model.Order{
-		OrderUID:    "new-order-uid",
-		TrackNumber: "different-track-number",
-		Entry:       "Alternative Entry",
-		Delivery: model.Delivery{
-			Name:    "Jane Smith",
-			Phone:   "+0987654321",
-			Zip:     "54321",
-			City:    "New City",
-			Address: "Different Address",
-			Region:  "Another Region",
-			Email:   "janesmith@example.com",
-		},
-		Payment: model.Payment{
-			Transaction:  "txn_9876",
-			RequestID:    "req_4321",
-			Currency:     "EUR",
-			Provider:     "Other Provider",
-			Amount:       200,
-			PaymentDt:    1667890123,
-			Bank:         "Other Bank",
-			DeliveryCost: 15,
-			GoodsTotal:   185,
-			CustomFee:    7,
-		},
-		Items: []model.Item{
-			{
-				ChrtID:      11,
-				TrackNumber: "alt-item-track-num-1",
-				Price:       75,
-				Rid:         "alt-item-rid-1",
-				Name:        "Alternate Item 1",
-				Sale:        25,
-				Size:        "S",
-				TotalPrice:  60,
-				NmID:        201,
-				Brand:       "Alt Brand",
-				Status:      3,
-			},
-			{
-				ChrtID:      22,
-				TrackNumber: "alt-item-track-num-2",
-				Price:       110,
-				Rid:         "alt-item-rid-2",
-				Name:        "Alternate Item 2",
-				Sale:        35,
-				Size:        "XL",
-				TotalPrice:  80,
-				NmID:        202,
-				Brand:       "Yet Another Alt Brand",
-				Status:      4,
-			},
-		},
-		Locale:            "ru-RU",
-		InternalSignature: "alternate-signature",
-		CustomerID:        "cust_456",
-		DeliveryService:   "Alternative Delivery Service",
-		Shardkey:          "alternative-shard-key",
-		SmID:              8888,
-		DateCreated:       time.Now().AddDate(0, 0, -14), // Two weeks ago
-		OofShard:          "alternate-oof-shard",
-	}
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
 
-	err := a.serviceProvider.OrderRepository(context.Background()).CreateOrder(context.TODO(), testOrder)
-	if err != nil {
-		return err
-	}*/
+	go func() {
+		defer wg.Done()
+		if err := a.runServer(); err != nil {
+			log.Fatalf("failed to run server: %v", err)
+		}
+	}()
 
-	_, err := a.serviceProvider.OrderRepository(context.Background()).GetAllOrders(context.TODO())
-	if err != nil {
-		return err
-	}
-	// some gorutines with running servers
+	wg.Wait()
 	return nil
 }
 
-func (a *App) initDeps(_ context.Context) error {
+func (a *App) initDeps(ctx context.Context) error {
 	err := a.initConfig()
 	if err != nil {
 		return err
 	}
 
 	a.initServiceProvider()
+
 	logger.Init(logger.GetCore(logger.GetAtomicLevel(a.serviceProvider.LoggerConfig().Level())))
+
+	a.initServer(ctx)
 
 	return nil
 }
@@ -134,4 +78,26 @@ func (a *App) initConfig() error {
 
 func (a *App) initServiceProvider() {
 	a.serviceProvider = NewServiceProvider()
+}
+
+func (a *App) initServer(ctx context.Context) {
+	srv := &http.Server{
+		Addr:    a.serviceProvider.ServerConfig().Address(),
+		Handler: a.serviceProvider.Handler(ctx).InitRouter(),
+	}
+
+	a.server = srv
+}
+
+func (a *App) runServer() error {
+	log.Printf("server is running on %s\n", a.serviceProvider.ServerConfig().Address())
+
+	err := a.server.ListenAndServe()
+	if err != nil {
+		return err
+	}
+
+	log.Println("server stopped")
+
+	return nil
 }

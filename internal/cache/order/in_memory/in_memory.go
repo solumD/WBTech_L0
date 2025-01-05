@@ -27,7 +27,7 @@ func New() cache.OrderCache {
 func (c *inMemoryOrderCache) SaveOrder(uid string, order model.Order) error {
 	c.mu.RLock()
 	_, exist := c.orders[uid]
-	c.mu.Unlock()
+	c.mu.RUnlock()
 
 	if exist {
 		return fmt.Errorf("order with uid %s already exist", uid)
@@ -44,7 +44,7 @@ func (c *inMemoryOrderCache) SaveOrder(uid string, order model.Order) error {
 func (c *inMemoryOrderCache) GetOrderByUID(uid string) (model.Order, error) {
 	c.mu.RLock()
 	order, exist := c.orders[uid]
-	c.mu.Unlock()
+	c.mu.RUnlock()
 
 	if !exist {
 		return model.Order{}, fmt.Errorf("order with uid %s doesn't exist", uid)
