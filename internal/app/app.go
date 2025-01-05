@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
@@ -43,6 +44,8 @@ func (a *App) Run() error {
 
 	go func() {
 		defer wg.Done()
+
+		closer.Add(a.shutdownServer)
 		if err := a.runServer(); err != nil {
 			log.Fatalf("failed to run server: %v", err)
 		}
@@ -98,6 +101,17 @@ func (a *App) runServer() error {
 	}
 
 	log.Println("server stopped")
+
+	return nil
+}
+
+func (a *App) shutdownServer() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := a.server.Shutdown(ctx); err != nil {
+		return err
+	}
 
 	return nil
 }
