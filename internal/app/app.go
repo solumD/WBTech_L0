@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
 	"github.com/solumD/WBTech_L0/internal/logger"
@@ -40,7 +41,7 @@ func (a *App) Run() error {
 	}()
 
 	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
@@ -49,6 +50,11 @@ func (a *App) Run() error {
 		if err := a.runServer(); err != nil {
 			log.Fatalf("failed to run server: %v", err)
 		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		a.runOrderConsuming()
 	}()
 
 	wg.Wait()
@@ -103,6 +109,33 @@ func (a *App) runServer() error {
 	log.Println("server stopped")
 
 	return nil
+}
+
+func (a *App) runOrderConsuming() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	msgChan := make(chan *sarama.ConsumerMessage)
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		err := a.serviceProvider.OrderConsumer().Consume(ctx, msgChan)
+		if err != nil {
+			log.Fatalf("order consumer error: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		err := a.serviceProvider.OrderService(ctx).Consume(ctx, msgChan)
+		if err != nil {
+			log.Fatalf("servicer consume error: %v", err)
+		}
+	}()
+
+	wg.Wait()
 }
 
 func (a *App) shutdownServer() error {

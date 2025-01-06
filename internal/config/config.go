@@ -7,6 +7,11 @@ type PGConfig interface {
 	DSN() string
 }
 
+// KafkaConfig interface ok Kafka config
+type KafkaConfig interface {
+	Brokers() []string
+}
+
 // LoggerConfig interface of logger config
 type LoggerConfig interface {
 	Level() string

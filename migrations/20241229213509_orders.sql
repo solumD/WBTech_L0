@@ -16,27 +16,27 @@ CREATE TABLE payment (
     request_id VARCHAR UNIQUE,
     currency VARCHAR NOT NULL,
     provider VARCHAR NOT NULL,
-    amount INT NOT NULL,
-    payment_dt INT UNIQUE NOT NULL,
+    amount INTEGER NOT NULL,
+    payment_dt INTEGER UNIQUE NOT NULL,
     bank VARCHAR NOT NULL,
-    delivery_cost INT NOT NULL,
-    goods_total INT NOT NULL,
-    custom_fee INT NOT NULL
+    delivery_cost INTEGER NOT NULL,
+    goods_total INTEGER NOT NULL,
+    custom_fee INTEGER NOT NULL
 );
 
 CREATE TABLE item (
     id SERIAL PRIMARY KEY,
-    chrt_id INT UNIQUE NOT NULL,
+    chrt_id INTEGER UNIQUE NOT NULL,
     track_number VARCHAR NOT NULL,
-    price INT NOT NULL,
+    price INTEGER NOT NULL,
     rid VARCHAR NOT NULL,
     name VARCHAR NOT NULL,
-    sale INT NOT NULL,
+    sale INTEGER NOT NULL,
     size VARCHAR NOT NULL,
-    total_price INT NOT NULL,
-    nm_id INT UNIQUE NOT NULL,
+    total_price INTEGER NOT NULL,
+    nm_id INTEGER UNIQUE NOT NULL,
     brand VARCHAR NOT NULL,
-    status INT NOT NULL
+    status INTEGER NOT NULL
 );
 
 CREATE TABLE orders (
@@ -44,22 +44,22 @@ CREATE TABLE orders (
     order_uid VARCHAR UNIQUE NOT NULL,
     track_number VARCHAR UNIQUE NOT NULL,
     entry VARCHAR NOT NULL,
-    delivery_id INT REFERENCES delivery(id),
-    payment_id INT REFERENCES payment(id),
+    delivery_id INTEGER REFERENCES delivery(id),
+    payment_id INTEGER REFERENCES payment(id),
     locale VARCHAR NOT NULL,
     internal_signature VARCHAR,
     customer_id VARCHAR NOT NULL,
     delivery_service VARCHAR NOT NULL,
     shardkey VARCHAR NOT NULL,
-    sm_id INT NOT NULL,
+    sm_id INTEGER NOT NULL,
     date_created TIMESTAMP NOT NULL DEFAULT NOW(),
     oof_shard VARCHAR NOT NULL
 );
 
 CREATE TABLE orders_and_items (
     id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES orders(id),
-    item_id INT REFERENCES item(id)
+    order_id INTEGER REFERENCES orders(id),
+    item_id INTEGER REFERENCES item(id)
 );
 
 -- +goose Down

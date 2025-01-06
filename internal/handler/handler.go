@@ -26,7 +26,6 @@ func (h *Handler) InitRouter() chi.Router {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	router.Post("/order/create", h.CreateOrder)
 	router.Get("/order/get/{uid}", h.GetOrderByUID)
 
 	return router

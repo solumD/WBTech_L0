@@ -8,6 +8,8 @@ import (
 	inmemory "github.com/solumD/WBTech_L0/internal/cache/order/in_memory"
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
+	"github.com/solumD/WBTech_L0/internal/consumer"
+	"github.com/solumD/WBTech_L0/internal/consumer/kafka"
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/db/pg"
 	"github.com/solumD/WBTech_L0/internal/db/transaction"
@@ -20,11 +22,14 @@ import (
 
 type serviceProvider struct {
 	pgConfig     config.PGConfig
+	kafkaConfig  config.KafkaConfig
 	serverConfig config.ServerConfig
 	loggerConfig config.LoggerConfig
 
 	dbClient  db.Client
 	txManager db.TxManager
+
+	orderConsumer consumer.OrderConsumer
 
 	orderCache cache.OrderCache
 
@@ -50,6 +55,20 @@ func (s *serviceProvider) PGConfig() config.PGConfig {
 	}
 
 	return s.pgConfig
+}
+
+// KafkaConfig initializes Kafka config if it is not initialized yet and returns it
+func (s *serviceProvider) KafkaConfig() config.KafkaConfig {
+	if s.kafkaConfig == nil {
+		cfg, err := config.NewKafkaConfig()
+		if err != nil {
+			log.Fatalf("failed to get kafka config: %v", err)
+		}
+
+		s.kafkaConfig = cfg
+	}
+
+	return s.kafkaConfig
 }
 
 // LoggerConfig initializes logger config if it is not initialized yet and returns it
@@ -108,6 +127,20 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	}
 
 	return s.txManager
+}
+
+// OrderConsumer initializes order consumer if it is not initialized yet and returns it
+func (s *serviceProvider) OrderConsumer() consumer.OrderConsumer {
+	if s.orderConsumer == nil {
+		consumer, err := kafka.NewOrderConsumer(s.KafkaConfig().Brokers())
+		if err != nil {
+			log.Fatalf("failed to get kafka consumer: %v", err)
+		}
+
+		s.orderConsumer = consumer
+	}
+
+	return s.orderConsumer
 }
 
 // OrderCache initializes order cache if it is not initialized yet and returns it
