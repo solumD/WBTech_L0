@@ -2,7 +2,11 @@ package order
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"sync"
 
+	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/cache"
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/logger"
@@ -63,4 +67,46 @@ func (s *srv) GetOrderByUID(_ context.Context, uid string) (model.Order, error) 
 
 	logger.Info("got order from cache", zap.Any("order", order))
 	return order, nil
+}
+
+// ConsumeOrders gets kafka order-messages from orders chan and saves them in repository
+func (s *srv) ConsumeOrders(ctx context.Context, orders chan *sarama.ConsumerMessage) error {
+	if orders == nil {
+		return fmt.Errorf("orders chan is nil")
+	}
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case msg, ok := <-orders:
+				if !ok {
+					logger.Info("orders chan is closed, stopping service consumer")
+					return
+				}
+
+				order := &model.Order{}
+				if err := json.Unmarshal(msg.Value, order); err != nil {
+					logger.Error("failed to unmarshal order", zap.Error(err))
+
+				}
+
+				logger.Info("recieved order from consumer", zap.Any("order", *order))
+
+				if err := s.CreateOrder(ctx, *order); err != nil {
+					logger.Error("failed to create order", zap.Error(err))
+				}
+			}
+
+		}
+	}()
+
+	wg.Wait()
+
+	return nil
 }

@@ -119,7 +119,9 @@ func (a *App) runOrderConsuming() {
 		log.Fatalf("failed to start order consumer: %v", err)
 	}
 
-	a.serviceProvider.OrderService(ctx).Consume(ctx, msgChan)
+	if err := a.serviceProvider.OrderService(ctx).ConsumeOrders(ctx, msgChan); err != nil {
+		log.Fatalf("failed to start service order consumer: %v", err)
+	}
 }
 
 func (a *App) shutdownServer() error {
