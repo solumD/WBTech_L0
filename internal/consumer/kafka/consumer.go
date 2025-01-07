@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"sync"
 
 	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/closer"
@@ -35,25 +36,37 @@ func NewOrderConsumer(brokers []string) (consumer.OrderConsumer, error) {
 
 // Consume recieves chan for producer messages,
 // consumes messages and sends them in msgOut
-func (c *orderConsumer) Consume(ctx context.Context, msgOut chan *sarama.ConsumerMessage) error {
+func (c *orderConsumer) Consume(ctx context.Context) (chan *sarama.ConsumerMessage, error) {
 	pc, err := c.consumer.ConsumePartition(c.topicName, 0, sarama.OffsetNewest)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
 	closer.Add(pc.Close)
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case msg, ok := <-pc.Messages():
-			if !ok {
-				return nil
+	msgOut := make(chan *sarama.ConsumerMessage)
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case msg, ok := <-pc.Messages():
+				if !ok {
+					return
+				}
+
+				msgOut <- msg
 			}
-
-			msgOut <- msg
 		}
-	}
+	}()
 
+	go func() {
+		wg.Wait()
+		close(msgOut)
+	}()
+
+	return msgOut, nil
 }

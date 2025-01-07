@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/config"
 	"github.com/solumD/WBTech_L0/internal/logger"
@@ -115,27 +114,12 @@ func (a *App) runOrderConsuming() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	msgChan := make(chan *sarama.ConsumerMessage)
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
+	msgChan, err := a.serviceProvider.OrderConsumer().Consume(ctx)
+	if err != nil {
+		log.Fatalf("failed to start order consumer: %v", err)
+	}
 
-	go func() {
-		defer wg.Done()
-		err := a.serviceProvider.OrderConsumer().Consume(ctx, msgChan)
-		if err != nil {
-			log.Fatalf("order consumer error: %v", err)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		err := a.serviceProvider.OrderService(ctx).Consume(ctx, msgChan)
-		if err != nil {
-			log.Fatalf("servicer consume error: %v", err)
-		}
-	}()
-
-	wg.Wait()
+	a.serviceProvider.OrderService(ctx).Consume(ctx, msgChan)
 }
 
 func (a *App) shutdownServer() error {

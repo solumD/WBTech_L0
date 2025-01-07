@@ -8,5 +8,5 @@ import (
 
 // OrderConsumer interface of order consumer
 type OrderConsumer interface {
-	Consume(ctx context.Context, msg chan *sarama.ConsumerMessage) error
+	Consume(ctx context.Context) (chan *sarama.ConsumerMessage, error)
 }
