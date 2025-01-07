@@ -14,9 +14,18 @@ import (
 
 type getOrderByUIDResponse struct {
 	response.Response
-	model.Order `json:"order"`
+	model.Order `json:"order,omitempty"`
 }
 
+// @Summary GetOrder
+// @Tags order
+// @Description gets order by its' uid
+// @ID get-order
+// @Produce json
+// @Param uid path string true "order's uid"
+// @Success 200 {object} getOrderByUIDResponse
+// @Failure 400,500
+// @Router /order/{uid} [get]
 // GetOrderByUID gets order by its' uid
 func (h *Handler) GetOrderByUID(w http.ResponseWriter, r *http.Request) {
 	uid := strings.TrimSpace(chi.URLParam(r, "uid"))

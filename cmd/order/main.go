@@ -7,6 +7,11 @@ import (
 	"github.com/solumD/WBTech_L0/internal/app"
 )
 
+// @title WBTech_L0 order service
+// @version 1.0
+// @host localhost:8080
+// @basePath /
+
 func main() {
 	ctx := context.Background()
 
