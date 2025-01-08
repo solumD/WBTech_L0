@@ -11,7 +11,8 @@ install-golangci-lint:
 lint:
 	$(LOCAL_BIN)/golangci-lint run ./... --config .golangci.pipeline.yaml
 
-install-deps:
+
+install-goose:
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@v3.14.0
 
 local-migration-status:

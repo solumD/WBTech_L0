@@ -29,13 +29,12 @@ type serviceProvider struct {
 	dbClient  db.Client
 	txManager db.TxManager
 
-	orderConsumer consumer.OrderConsumer
-
-	orderCache cache.OrderCache
-
+	orderConsumer   consumer.OrderConsumer
+	orderCache      cache.OrderCache
 	orderRepository repository.OrderRepository
 	orderService    service.OrderService
-	handler         *handler.Handler
+
+	handler *handler.Handler
 }
 
 // NewServiceProvider returns new object of service provider

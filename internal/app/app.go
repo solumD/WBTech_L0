@@ -90,8 +90,11 @@ func (a *App) initServiceProvider() {
 
 func (a *App) initServer(ctx context.Context) {
 	srv := &http.Server{
-		Addr:    a.serviceProvider.ServerConfig().Address(),
-		Handler: a.serviceProvider.Handler(ctx).InitRouter(a.serviceProvider.serverConfig.Address()),
+		Addr:         a.serviceProvider.ServerConfig().Address(),
+		Handler:      a.serviceProvider.Handler(ctx).InitRouter(a.serviceProvider.serverConfig.Address()),
+		ReadTimeout:  a.serviceProvider.ServerConfig().Timeout(),
+		WriteTimeout: a.serviceProvider.ServerConfig().Timeout(),
+		IdleTimeout:  a.serviceProvider.ServerConfig().IdleTimeout(),
 	}
 
 	a.server = srv

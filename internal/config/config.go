@@ -1,6 +1,10 @@
 package config
 
-import "github.com/joho/godotenv"
+import (
+	"time"
+
+	"github.com/joho/godotenv"
+)
 
 // PGConfig interface of Postgres config
 type PGConfig interface {
@@ -20,6 +24,8 @@ type LoggerConfig interface {
 // ServerConfig interface of Server config
 type ServerConfig interface {
 	Address() string
+	Timeout() time.Duration
+	IdleTimeout() time.Duration
 }
 
 // Load reads the .env file at the specified path
