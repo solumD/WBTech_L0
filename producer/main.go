@@ -31,7 +31,7 @@ func main() {
 	order := generateOrder()
 	data, err := json.Marshal(order)
 	if err != nil {
-		log.Printf("Error marshalling order: %v", err)
+		log.Printf("failed to marshal order: %v\n", err)
 	}
 
 	msg := &sarama.ProducerMessage{

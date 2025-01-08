@@ -15,6 +15,7 @@ services:
     volumes:
       - postgres_volume:/var/lib/postgresql/data
 
+  ## automatically makes up migrations in container
   migrator:
     build:
       context: .
