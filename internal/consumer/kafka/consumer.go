@@ -4,9 +4,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/closer"
 	"github.com/solumD/WBTech_L0/internal/consumer"
+
+	"github.com/IBM/sarama"
 )
 
 const (

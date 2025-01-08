@@ -2,12 +2,17 @@ package inmemory
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"sync"
 
 	"github.com/solumD/WBTech_L0/internal/cache"
 	"github.com/solumD/WBTech_L0/internal/model"
 	"github.com/solumD/WBTech_L0/internal/repository"
+)
+
+var (
+	errAlreadyExists = errors.New("order already exists in cache")
+	errDoesntExist   = errors.New("order doesn't exist in cache")
 )
 
 type inMemoryOrderCache struct {
@@ -30,7 +35,7 @@ func (c *inMemoryOrderCache) SaveOrder(uid string, order model.Order) error {
 	c.mu.RUnlock()
 
 	if exist {
-		return fmt.Errorf("order with uid %s already exist", uid)
+		return errAlreadyExists
 	}
 
 	c.mu.Lock()
@@ -47,7 +52,7 @@ func (c *inMemoryOrderCache) GetOrderByUID(uid string) (model.Order, error) {
 	c.mu.RUnlock()
 
 	if !exist {
-		return model.Order{}, fmt.Errorf("order with uid %s doesn't exist", uid)
+		return model.Order{}, errDoesntExist
 	}
 
 	return order, nil

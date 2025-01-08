@@ -3,10 +3,11 @@ package handler
 import (
 	"fmt"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/solumD/WBTech_L0/docs"
 	"github.com/solumD/WBTech_L0/internal/service"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 

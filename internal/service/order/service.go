@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/IBM/sarama"
 	"github.com/solumD/WBTech_L0/internal/cache"
 	"github.com/solumD/WBTech_L0/internal/db"
 	"github.com/solumD/WBTech_L0/internal/logger"
 	"github.com/solumD/WBTech_L0/internal/model"
 	"github.com/solumD/WBTech_L0/internal/repository"
 	"github.com/solumD/WBTech_L0/internal/service"
+
+	"github.com/IBM/sarama"
 	"go.uber.org/zap"
 )
 
@@ -50,6 +51,7 @@ func (s *srv) CreateOrder(ctx context.Context, order model.Order) error {
 
 	errCache := s.orderCache.SaveOrder(order.OrderUID, order)
 	if errCache != nil {
+		logger.Error("failed to save order in cache", zap.Error(err))
 		return errCache
 	}
 
@@ -62,6 +64,8 @@ func (s *srv) CreateOrder(ctx context.Context, order model.Order) error {
 func (s *srv) GetOrderByUID(_ context.Context, uid string) (model.Order, error) {
 	order, errCache := s.orderCache.GetOrderByUID(uid)
 	if errCache != nil {
+		logger.Error("failed to ger order from cache", zap.Error(errCache))
+
 		return model.Order{}, errCache
 	}
 
@@ -96,7 +100,7 @@ func (s *srv) ConsumeOrders(ctx context.Context, orders chan *sarama.ConsumerMes
 
 				}
 
-				logger.Info("recieved order from consumer", zap.Any("order", *order))
+				logger.Info("recieved order from consumer", zap.Any("order", order))
 
 				if err := s.CreateOrder(ctx, *order); err != nil {
 					logger.Error("failed to create order", zap.Error(err))
