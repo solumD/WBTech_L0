@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/brianvoe/gofakeit/v7"
@@ -28,24 +29,27 @@ func main() {
 		}
 	}()
 
-	order := generateOrder()
-	data, err := json.Marshal(order)
-	if err != nil {
-		log.Printf("failed to marshal order: %v\n", err)
-	}
+	for {
+		order := generateOrder()
+		data, err := json.Marshal(order)
+		if err != nil {
+			log.Printf("failed to marshal order: %v\n", err)
+		}
 
-	msg := &sarama.ProducerMessage{
-		Topic: topicName,
-		Value: sarama.ByteEncoder(data),
-	}
+		msg := &sarama.ProducerMessage{
+			Topic: topicName,
+			Value: sarama.ByteEncoder(data),
+		}
 
-	partition, offset, err := producer.SendMessage(msg)
-	if err != nil {
-		log.Printf("failed to send message in Kafka: %v\n", err.Error())
-		return
-	}
+		partition, offset, err := producer.SendMessage(msg)
+		if err != nil {
+			log.Printf("failed to send message in Kafka: %v\n", err.Error())
+			return
+		}
 
-	log.Printf("message sent to partition %d with offset %d\n", partition, offset)
+		log.Printf("message sent to partition %d with offset %d\n", partition, offset)
+		time.Sleep(5 * time.Second)
+	}
 }
 
 func newSyncProducer(brokerList []string) (sarama.SyncProducer, error) {
