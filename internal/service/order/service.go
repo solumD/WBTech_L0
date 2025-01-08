@@ -12,6 +12,7 @@ import (
 	"github.com/solumD/WBTech_L0/internal/model"
 	"github.com/solumD/WBTech_L0/internal/repository"
 	"github.com/solumD/WBTech_L0/internal/service"
+	"github.com/solumD/WBTech_L0/internal/utils/validate"
 
 	"github.com/IBM/sarama"
 	"go.uber.org/zap"
@@ -34,6 +35,10 @@ func New(orderRepository repository.OrderRepository, orderCache cache.OrderCache
 
 // CreateOrder creates order in repository and saves it in cache
 func (s *srv) CreateOrder(ctx context.Context, order model.Order) error {
+	if err := validate.Order(order); err != nil {
+		return err
+	}
+
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
 		errTx := s.orderRepository.CreateOrder(ctx, order)
 		if errTx != nil {

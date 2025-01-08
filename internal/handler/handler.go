@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 
-	_ "github.com/solumD/WBTech_L0/docs"
+	_ "github.com/solumD/WBTech_L0/docs" // swagger docs
 	"github.com/solumD/WBTech_L0/internal/service"
 
 	"github.com/go-chi/chi/v5"

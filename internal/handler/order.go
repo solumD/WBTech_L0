@@ -19,6 +19,7 @@ type getOrderByUIDResponse struct {
 	model.Order `json:"order,omitempty"`
 }
 
+// GetOrderByUID gets order by its' uid
 // @Summary GetOrder
 // @Tags order
 // @Description gets order by its' uid
@@ -28,7 +29,6 @@ type getOrderByUIDResponse struct {
 // @Success 200 {object} getOrderByUIDResponse
 // @Failure 400,500
 // @Router /order/{uid} [get]
-// GetOrderByUID gets order by its' uid
 func (h *Handler) GetOrderByUID(w http.ResponseWriter, r *http.Request) {
 	requestID := r.Context().Value(middleware.RequestIDKey).(string)
 
